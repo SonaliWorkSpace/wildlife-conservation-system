@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildlife Records | WildGuard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6f2;
+            color: #24352a;
+        }
+
+        header {
+            background: #173d2a;
+            color: white;
+            padding: 22px 30px;
+        }
+
+        main {
+            padding: 25px 30px;
+        }
+
+        .panel {
+            background: white;
+            padding: 24px;
+            margin-bottom: 24px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        input, select, textarea, button {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccd6ce;
+            border-radius: 5px;
+            font: inherit;
+        }
+
+        textarea {
+            grid-column: 1 / -1;
+            min-height: 90px;
+        }
+
+        button {
+            background: #245439;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #173d2a;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 700px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e7e1;
+            text-align: left;
+        }
+
+        th {
+            background: #eaf1eb;
+        }
+
+        a {
+            color: #245439;
+        }
+
+        @media (max-width: 600px) {
+            main {
+                padding: 15px;
+            }
+
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            textarea, .full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>WildGuard Intelligence</h1>
+    <p>Wildlife Records Management</p>
+</header>
+
+<main>
+    <p><a href="/">← Back to Dashboard</a></p>
+
+    <section class="panel">
+        <h2>Register Wildlife</h2>
+
+        <form th:action="@{/wildlife}"
+              th:object="${wildlife}"
+              method="post">
+
+            <input type="text"
+                   th:field="*{commonName}"
+                   placeholder="Common name (e.g. Bengal Tiger)"
+                   required>
+
+            <input type="text"
+                   th:field="*{scientificName}"
+                   placeholder="Scientific name">
+
+            <input type="text"
+                   th:field="*{species}"
+                   placeholder="Species group (e.g. Mammal)"
+                   required>
+
+            <input type="text"
+                   th:field="*{location}"
+                   placeholder="Protected area / location"
+                   required>
+
+            <select th:field="*{conservationStatus}" required>
+                <option value="">Select conservation status</option>
+                <option value="Least Concern">Least Concern</option>
+                <option value="Near Threatened">Near Threatened</option>
+                <option value="Vulnerable">Vulnerable</option>
+                <option value="Endangered">Endangered</option>
+                <option value="Critically Endangered">Critically Endangered</option>
+            </select>
+
+            <textarea th:field="*{notes}"
+                      placeholder="Observations and additional notes"></textarea>
+
+            <button class="full" type="submit">Register Wildlife</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Registered Wildlife</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Common Name</th>
+                        <th>Scientific Name</th>
+                        <th>Species Group</th>
+                        <th>Location</th>
+                        <th>Conservation Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="animal : ${wildlifeList}">
+                        <td th:text="${animal.id}"></td>
+                        <td th:text="${animal.commonName}"></td>
+                        <td th:text="${animal.scientificName}"></td>
+                        <td th:text="${animal.species}"></td>
+                        <td th:text="${animal.location}"></td>
+                        <td th:text="${animal.conservationStatus}"></td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(wildlifeList)}">
+                        <td colspan="6">No wildlife records registered yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

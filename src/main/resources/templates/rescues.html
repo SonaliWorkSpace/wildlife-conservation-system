@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rescue Operations | WildGuard Intelligence</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6f2;
+            color: #24352a;
+        }
+
+        header {
+            background: #173d2a;
+            color: white;
+            padding: 22px 6%;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+        }
+
+        header p {
+            margin: 0;
+            color: #cbdccf;
+        }
+
+        nav {
+            background: #24563b;
+            padding: 14px 6%;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 22px;
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 1250px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 24px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0000000c;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #24563b;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccd7cd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        button {
+            background: #24633e;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #173d2a;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+        }
+
+        th, td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #e5ebe5;
+        }
+
+        th {
+            background: #edf3ed;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            background: #e4eee7;
+            color: #24563b;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .priority {
+            font-weight: bold;
+        }
+
+        .high {
+            color: #b42318;
+        }
+
+        .medium {
+            color: #a15c00;
+        }
+
+        .low {
+            color: #24633e;
+        }
+
+        .status-form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 220px;
+        }
+
+        .status-form select {
+            min-width: 130px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #748176;
+            padding: 25px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #748176;
+        }
+
+        @media (max-width: 600px) {
+            nav a {
+                display: inline-block;
+                margin: 5px 12px 5px 0;
+            }
+
+            .panel {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>WildGuard Intelligence</h1>
+    <p>Wildlife Rescue & Emergency Response</p>
+</header>
+
+<nav>
+    <a th:href="@{/}">Dashboard</a>
+    <a th:href="@{/incidents}">Incidents</a>
+    <a th:href="@{/wildlife}">Wildlife</a>
+    <a th:href="@{/patrols}">Patrols</a>
+    <a th:href="@{/rescues}">Rescues</a>
+</nav>
+
+<main>
+
+    <section class="panel">
+        <h2>Register Rescue Case</h2>
+        <p>Record wildlife emergencies and track rescue progress.</p>
+
+        <form th:action="@{/rescues}" th:object="${rescue}" method="post">
+
+            <div class="form-grid">
+
+                <div>
+                    <label for="species">Species / Animal</label>
+                    <input type="text" id="species"
+                           th:field="*{species}"
+                           placeholder="e.g. Asian Elephant"
+                           required>
+                </div>
+
+                <div>
+                    <label for="location">Incident Location</label>
+                    <input type="text" id="location"
+                           th:field="*{location}"
+                           placeholder="Enter location"
+                           required>
+                </div>
+
+                <div>
+                    <label for="reportedBy">Reported By</label>
+                    <input type="text" id="reportedBy"
+                           th:field="*{reportedBy}"
+                           placeholder="Name or reporting team"
+                           required>
+                </div>
+
+                <div>
+                    <label for="priority">Rescue Priority</label>
+                    <select id="priority" th:field="*{priority}" required>
+                        <option value="">Select priority</option>
+                        <option value="HIGH">High</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="LOW">Low</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="reportedDate">Report Date</label>
+                    <input type="date" id="reportedDate"
+                           th:field="*{reportedDate}">
+                </div>
+
+                <div>
+                    <label for="rescueStatus">Initial Status</label>
+                    <select id="rescueStatus" th:field="*{status}" required>
+                        <option value="REPORTED">Reported</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESCUED">Rescued</option>
+                        <option value="CLOSED">Closed</option>
+                    </select>
+                </div>
+
+                <div class="full-width">
+                    <label for="description">Case Description</label>
+                    <textarea id="description" th:field="*{description}"
+                              rows="3"
+                              placeholder="Describe the emergency and action required"></textarea>
+                </div>
+
+                <div class="full-width">
+                    <button type="submit">Register Rescue Case</button>
+                </div>
+
+            </div>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Rescue Case Records</h2>
+        <p>Monitor reported cases and update their progress.</p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Species</th>
+                        <th>Location</th>
+                        <th>Reported By</th>
+                        <th>Priority</th>
+                        <th>Report Date</th>
+                        <th>Status</th>
+                        <th>Update Status</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="item : ${rescueList}">
+                        <td th:text="${item.id}"></td>
+                        <td th:text="${item.species}"></td>
+                        <td th:text="${item.location}"></td>
+                        <td th:text="${item.reportedBy}"></td>
+
+                        <td>
+                            <span class="priority"
+                                  th:classappend="${item.priority == 'HIGH'} ? ' high' : (${item.priority == 'MEDIUM'} ? ' medium' : ' low')"
+                                  th:text="${item.priority}"></span>
+                        </td>
+
+                        <td th:text="${item.reportedDate}"></td>
+
+                        <td>
+                            <span class="status"
+                                  th:text="${item.status}"></span>
+                        </td>
+
+                        <td>
+                            <form class="status-form"
+                                  th:action="@{/rescues/{id}/status(id=${item.id})}"
+                                  method="post">
+
+                                <select name="status" aria-label="Select rescue status">
+                                    <option value="REPORTED"
+                                            th:selected="${item.status == 'REPORTED'}">
+                                        Reported
+                                    </option>
+
+                                    <option value="IN_PROGRESS"
+                                            th:selected="${item.status == 'IN_PROGRESS'}">
+                                        In Progress
+                                    </option>
+
+                                    <option value="RESCUED"
+                                            th:selected="${item.status == 'RESCUED'}">
+                                        Rescued
+                                    </option>
+
+                                    <option value="CLOSED"
+                                            th:selected="${item.status == 'CLOSED'}">
+                                        Closed
+                                    </option>
+                                </select>
+
+                                <button type="submit">Update</button>
+                            </form>
+                        </td>
+
+                        <td th:text="${item.description}"></td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(rescueList)}">
+                        <td colspan="9" class="empty">
+                            No rescue cases registered yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    WildGuard Intelligence · Wildlife Conservation Operations
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Management | WildGuard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6f2;
+            color: #24352a;
+        }
+
+        header {
+            background: #173d2a;
+            color: white;
+            padding: 22px 30px;
+        }
+
+        main {
+            padding: 25px 30px;
+        }
+
+        .panel {
+            background: white;
+            padding: 24px;
+            margin-bottom: 24px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        input, select, textarea, button {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccd6ce;
+            border-radius: 5px;
+            font: inherit;
+        }
+
+        textarea {
+            grid-column: 1 / -1;
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        button {
+            background: #245439;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #173d2a;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e7e1;
+            text-align: left;
+        }
+
+        th {
+            background: #eaf1eb;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        a {
+            color: #245439;
+        }
+
+        .status-form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 210px;
+        }
+
+        .status-form select {
+            min-width: 120px;
+        }
+
+        .status-form button {
+            width: auto;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            main {
+                padding: 15px;
+            }
+
+            .panel {
+                padding: 16px;
+            }
+
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            textarea, .full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>WildGuard Intelligence</h1>
+    <p>Incident Management</p>
+</header>
+
+<main>
+    <p><a href="/">← Back to Dashboard</a></p>
+
+    <section class="panel">
+        <h2>Register a New Incident</h2>
+
+        <form th:action="@{/incidents}"
+              th:object="${incident}"
+              method="post">
+
+            <input type="text"
+                   th:field="*{title}"
+                   placeholder="Incident title"
+                   required>
+
+            <select th:field="*{category}" required>
+                <option value="">Select category</option>
+                <option value="Poaching">Poaching</option>
+                <option value="Injured Animal">Injured Animal</option>
+                <option value="Human-Wildlife Conflict">Human-Wildlife Conflict</option>
+                <option value="Habitat Damage">Habitat Damage</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <input type="text"
+                   th:field="*{location}"
+                   placeholder="Location / protected area"
+                   required>
+
+            <select th:field="*{severity}" required>
+                <option value="">Select severity</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="CRITICAL">Critical</option>
+            </select>
+
+            <textarea th:field="*{description}"
+                      placeholder="Describe the incident"
+                      required></textarea>
+
+            <button class="full" type="submit">Register Incident</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Reported Incidents</h2>
+        
+        
+<section class="panel">
+    <h2>Reported Incidents</h2>
+
+    <form th:action="@{/incidents}" method="get">
+
+        <select name="severity">
+            <option value="">All Severities</option>
+            <option value="LOW"
+                    th:selected="${selectedSeverity == 'LOW'}">Low</option>
+            <option value="MEDIUM"
+                    th:selected="${selectedSeverity == 'MEDIUM'}">Medium</option>
+            <option value="HIGH"
+                    th:selected="${selectedSeverity == 'HIGH'}">High</option>
+            <option value="CRITICAL"
+                    th:selected="${selectedSeverity == 'CRITICAL'}">Critical</option>
+        </select>
+
+        <select name="status">
+            <option value="">All Statuses</option>
+            <option value="OPEN"
+                    th:selected="${selectedStatus == 'OPEN'}">Open</option>
+            <option value="IN_PROGRESS"
+                    th:selected="${selectedStatus == 'IN_PROGRESS'}">In Progress</option>
+            <option value="RESOLVED"
+                    th:selected="${selectedStatus == 'RESOLVED'}">Resolved</option>
+        </select>
+
+        <input type="text"
+               name="location"
+               placeholder="Search by location"
+               th:value="${searchLocation}">
+
+        <button type="submit">Apply Filters</button>
+        <a href="/incidents">Clear Filters</a>
+
+    </form>
+
+    <div class="table-wrap">
+        <!-- Keep your existing incidents table here, unchanged -->
+    </div>
+</section>
+        
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Location</th>
+                        <th>Severity</th>
+                        <th>Status</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="item : ${incidents}">
+                        <td th:text="${item.id}"></td>
+                        <td th:text="${item.title}"></td>
+                        <td th:text="${item.category}"></td>
+                        <td th:text="${item.location}"></td>
+                        <td th:text="${item.severity}"></td>
+                        <td th:text="${item.status}"></td>
+
+                        <td>
+                            <form class="status-form"
+                                  th:action="@{/incidents/{id}/status(id=${item.id})}"
+                                  method="post">
+
+                                <select name="status" aria-label="Choose incident status">
+                                    <option value="OPEN"
+                                            th:selected="${item.status == 'OPEN'}">
+                                        Open
+                                    </option>
+
+                                    <option value="IN_PROGRESS"
+                                            th:selected="${item.status == 'IN_PROGRESS'}">
+                                        In Progress
+                                    </option>
+
+                                    <option value="RESOLVED"
+                                            th:selected="${item.status == 'RESOLVED'}">
+                                        Resolved
+                                    </option>
+                                </select>
+
+                                <button type="submit">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(incidents)}">
+                        <td colspan="7">No incidents reported yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>
