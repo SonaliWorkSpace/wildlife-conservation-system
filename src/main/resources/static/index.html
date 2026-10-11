@@ -1,0 +1,951 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WildGuard | Conservation Intelligence</title>
+
+<style>
+:root {
+    --bg: #0b1512;
+    --panel: #14211c;
+    --panel2: #192b24;
+    --border: #2a4035;
+    --green: #b9f27c;
+    --text: #edf5ed;
+    --muted: #91a397;
+    --orange: #ffbd78;
+    --red: #ff8888;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+    width: 245px;
+    background: #101d17;
+    border-right: 1px solid var(--border);
+    padding: 25px 15px;
+    flex-shrink: 0;
+}
+.brand { font-size: 23px; font-weight: 800; margin-bottom: 5px; }
+.brand span { color: var(--green); }
+.tagline { font-size: 12px; color: var(--muted); margin-bottom: 35px; }
+.section-label {
+    color: #728779;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin: 24px 10px 10px;
+}
+.nav-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 4px 0;
+    border: 0;
+    border-radius: 9px;
+    color: #bdcbbf;
+    background: transparent;
+    text-align: left;
+}
+.nav-button:hover, .nav-button.active {
+    color: var(--green);
+    background: #26392b;
+}
+.sidebar-footer {
+    margin-top: 40px;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--muted);
+}
+main { flex: 1; min-width: 0; padding: 30px; }
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+.eyebrow { color: var(--green); font-size: 11px; letter-spacing: 2px; }
+h1 { font-size: clamp(25px, 3vw, 35px); margin: 8px 0; }
+.subtitle { color: var(--muted); font-size: 13px; }
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 10px 13px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); }
+.dot.online { background: var(--green); }
+.dot.offline { background: var(--red); }
+.hero {
+    background: linear-gradient(115deg, #203c2a, #152820 70%);
+    border: 1px solid #35553b;
+    border-radius: 17px;
+    padding: 27px;
+    margin-bottom: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+.hero h2 { font-size: 25px; margin: 0 0 9px; }
+.hero p { color: #c2d4c2; font-size: 13px; line-height: 1.7; max-width: 580px; }
+.hero-mark { font-size: 65px; }
+.button {
+    border: 1px solid var(--border);
+    background: var(--panel2);
+    color: var(--text);
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+.button.primary { background: var(--green); color: #152416; border-color: var(--green); font-weight: 750; }
+.button:hover { filter: brightness(1.12); }
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 25px;
+}
+.metric {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 18px;
+    border-radius: 13px;
+}
+.metric-icon { font-size: 22px; }
+.metric-label { color: var(--muted); font-size: 12px; margin-top: 15px; }
+.metric-value { font-size: 30px; font-weight: 750; margin-top: 7px; }
+.metric-note { font-size: 11px; color: var(--green); margin-top: 6px; }
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 25px 0 14px;
+}
+h2 { font-size: 19px; }
+h3 { font-size: 14px; }
+.modules {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+}
+.module {
+    text-align: left;
+    color: var(--text);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+}
+.module:hover { border-color: var(--green); transform: translateY(-1px); }
+.module-icon { font-size: 24px; }
+.module h3 { margin: 13px 0 7px; }
+.module p { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 0; }
+.module small { display: block; margin-top: 14px; color: var(--green); }
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 20px;
+    margin-bottom: 18px;
+}
+.service-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.service {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 13px;
+    background: #101d17;
+    border-radius: 9px;
+    font-size: 12px;
+}
+.service small { display: block; color: var(--muted); margin-top: 5px; }
+.table-tools { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+input, select, textarea {
+    background: #0d1913;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px;
+    width: 100%;
+}
+.table-tools input { max-width: 330px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { text-align: left; color: var(--muted); font-weight: 600; background: #101d17; }
+th, td { padding: 13px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { color: #d8e5d9; }
+.badge {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 5px 8px;
+    background: #29392c;
+    color: var(--green);
+    font-size: 10px;
+}
+.empty { color: var(--muted); padding: 28px; text-align: center; }
+.hidden { display: none !important; }
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: #000b;
+    display: none;
+    place-items: center;
+    padding: 16px;
+}
+.modal-backdrop.open { display: grid; }
+.modal {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 23px;
+    width: min(520px, 100%);
+    max-height: 90vh;
+    overflow: auto;
+}
+.modal h2 { margin-top: 0; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field label { font-size: 12px; color: #c4d5c5; }
+.field.full { grid-column: 1 / -1; }
+.form-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 20px; }
+#toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 20;
+    max-width: 350px;
+    padding: 14px 18px;
+    background: #243a2a;
+    border: 1px solid #527744;
+    border-radius: 10px;
+    display: none;
+    font-size: 13px;
+}
+footer { color: #728779; font-size: 11px; padding: 20px 0; }
+@media (max-width: 950px) {
+    .sidebar { width: 205px; }
+    .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .modules { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 650px) {
+    .app { display: block; }
+    .sidebar { width: 100%; padding: 16px; }
+    .tagline { margin-bottom: 12px; }
+    .section-label, .sidebar-footer { display: none; }
+    .nav { display: flex; overflow-x: auto; gap: 5px; }
+    .nav-button { width: auto; white-space: nowrap; }
+    main { padding: 18px; }
+    .hero-mark { display: none; }
+    .modules, .service-list { grid-template-columns: 1fr; }
+    .topbar { align-items: flex-start; flex-direction: column; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+<aside class="sidebar">
+    <div class="brand">Wild<span>Guard</span></div>
+    <div class="tagline">CONSERVATION INTELLIGENCE</div>
+
+    <div class="section-label">WORKSPACE</div>
+    <nav class="nav">
+        <button class="nav-button active" data-page="dashboard">◫ &nbsp; Overview</button>
+        <button class="nav-button" data-page="wildlife">◉ &nbsp; Wildlife registry</button>
+        <button class="nav-button" data-page="areas">⌖ &nbsp; Protected areas</button>
+        <button class="nav-button" data-page="habitats">♧ &nbsp; Habitats</button>
+        <button class="nav-button" data-page="patrols">◎ &nbsp; Patrol management</button>
+        <button class="nav-button" data-page="incidents">⚑ &nbsp; Incidents & threats</button>
+        <button class="nav-button" data-page="rescues">♡ &nbsp; Rescue operations</button>
+        <button class="nav-button" data-page="staff">♙ &nbsp; Field staff</button>
+        <button class="nav-button" data-page="resources">▣ &nbsp; Resources</button>
+        <button class="nav-button" data-page="programmes">✳ &nbsp; Conservation programmes</button>
+    </nav>
+<!--
+    <div class="sidebar-footer">
+        <span class="dot online"></span> Authentication disabled
+        <div style="margin-top:7px">Development environment · Local services</div>
+    </div> -->
+</aside>
+
+<main>
+    <header class="topbar">
+        <div>
+            <div class="eyebrow">PROTECTED AREA OPERATIONS</div>
+            <h1 id="page-title">Conservation overview</h1>
+            <div class="subtitle" id="page-subtitle">A unified view of wildlife protection and field operations.</div>
+        </div>
+        <div class="status-pill"><span id="gateway-dot" class="dot"></span><span id="gateway-status">Checking services…</span></div>
+    </header>
+
+    <section id="dashboard-page">
+        <div class="hero">
+            <div>
+                <div class="eyebrow">FIELD INTELLIGENCE PLATFORM</div>
+                <h2>Protect wildlife.<br>Preserve the wild.</h2>
+                <p>Monitor animal records, protected habitats, patrols, incidents and rescue operations through one conservation workspace.</p>
+                <button class="button primary" onclick="openPage('wildlife')">Explore wildlife registry →</button>
+            </div>
+            <div class="hero-mark">🌿</div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric"><div class="metric-icon">🐅</div><div class="metric-label">Registered wildlife</div><div class="metric-value" id="m-wildlife">—</div><div class="metric-note">Wildlife registry</div></div>
+            <div class="metric"><div class="metric-icon">⚑</div><div class="metric-label">Total incidents</div><div class="metric-value" id="m-incidents">—</div><div class="metric-note">Threat monitoring</div></div>
+            <div class="metric"><div class="metric-icon">◎</div><div class="metric-label">Active patrols</div><div class="metric-value" id="m-patrols">—</div><div class="metric-note">Field operations</div></div>
+            <div class="metric"><div class="metric-icon">♡</div><div class="metric-label">Rescue cases</div><div class="metric-value" id="m-rescues">—</div><div class="metric-note">Animal welfare</div></div>
+        </div>
+
+        <div class="section-heading"><h2>Conservation modules</h2><span class="subtitle">Select a workspace</span></div>
+        <div class="modules" id="module-cards"></div>
+
+        <div class="section-heading"><h2>Microservice connectivity</h2><button class="button" onclick="checkServices()">↻ Refresh</button></div>
+        <div class="panel"><div class="service-list" id="service-list"></div></div>
+
+        <div class="section-heading"><h2>Latest field records</h2><button class="button" onclick="loadRecent()">Refresh records</button></div>
+        <div class="panel"><div id="recent-records" class="empty">Loading field records…</div></div>
+    </section>
+
+    <section id="records-page" class="hidden">
+        <div class="panel">
+            <div class="section-heading" style="margin-top:0">
+                <div><h2 id="records-heading">Records</h2><div class="subtitle" id="records-description"></div></div>
+                <button class="button primary" id="add-button" onclick="openForm()">+ Add record</button>
+            </div>
+            <div class="table-tools">
+                <input id="search" placeholder="Search records…" oninput="renderTable()">
+                <button class="button" onclick="loadRecords()">↻ Refresh</button>
+            </div>
+            <div class="table-wrap" id="table-container"></div>
+        </div>
+    </section>
+
+    <footer>WildGuard · Wildlife Conservation & Protected Area Management · Local development environment</footer>
+</main>
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this)closeForm()">
+    <div class="modal">
+        <h2 id="form-title">Register a record</h2>
+        <div class="subtitle" style="margin-bottom:20px">Enter the details below and save the record.</div>
+        <form id="record-form" onsubmit="saveRecord(event)">
+            <div id="form-fields" class="form-grid"></div>
+            <div class="form-actions">
+                <button type="button" class="button" onclick="closeForm()">Cancel</button>
+                <button type="submit" class="button primary" id="save-button">Save record</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const API = "http://localhost:8090";
+
+const modules = {
+    wildlife: {
+        title: "Wildlife registry", icon: "🐅",
+        description: "Animal records and species information.",
+        url: "/api/wildlife",
+        fields: [
+            ["species","Species","text",true],
+            ["commonName","Common name","text",true],
+            ["scientificName","Scientific name","text",false],
+            ["location","Location","text",true],
+            ["conservationStatus","Conservation status","select",true,["LEAST_CONCERN","VULNERABLE","ENDANGERED","CRITICALLY_ENDANGERED","NEAR_THREATENED","UNKNOWN"]],
+            ["notes","Notes","textarea",false]
+        ],
+        columns: ["id","species","commonName","location","conservationStatus"]
+    },
+    incidents: {
+        title: "Incidents & threats", icon: "⚑",
+        description: "Report and track conservation threats.",
+        url: "/api/incidents",
+        fields: [
+            ["incidentType","Incident type","text",true],
+            ["description","Description","textarea",true],
+            ["location","Location","text",true],
+            ["severity","Severity","select",true,["LOW","MEDIUM","HIGH","CRITICAL"]],
+            ["status","Status","select",false,["OPEN","IN_PROGRESS","RESOLVED","CLOSED"]]
+        ],
+        columns: ["id","incidentType","location","severity","status","reportedAt"]
+    },
+    patrols: {
+        title: "Patrol management", icon: "◎",
+        description: "Track ranger patrols and assignments.",
+        url: "/api/patrols",
+        fields: [
+            ["rangerName","Ranger name","text",true],
+            ["assignedArea","Assigned area","text",true],
+            ["patrolType","Patrol type","text",true],
+            ["status","Status","select",false,["PLANNED","IN_PROGRESS","COMPLETED","CANCELLED"]]
+        ],
+        columns: ["id","rangerName","assignedArea","patrolType","status","startTime"]
+    },
+    rescues: {
+        title: "Rescue operations", icon: "♡",
+        description: "Manage wildlife rescue and treatment cases.",
+        url: "/api/rescues",
+        fields: [
+            ["animalSpecies","Animal species","text",true],
+            ["rescueLocation","Rescue location","text",true],
+            ["rescueTeam","Rescue team","text",true],
+            ["condition","Animal condition","text",true],
+            ["treatment","Treatment","textarea",false],
+            ["status","Status","select",false,["REPORTED","IN_PROGRESS","COMPLETED"]]
+        ],
+        columns: ["id","animalSpecies","rescueLocation","rescueTeam","condition","status"]
+    },
+    areas: {
+        title: "Protected areas", icon: "⌖",
+        description: "Manage reserves and protected locations.",
+        url: "/api/protected-areas",
+        fields: [
+            ["areaName","Area name","text",true],
+            ["state","State","text",true],
+            ["location","Location","text",true],
+            ["areaSizeSqKm","Area size (sq. km)","number",true],
+            ["protectionStatus","Protection status","text",true],
+            ["description","Description","textarea",false]
+        ],
+        columns: ["id","areaName","state","location","areaSizeSqKm","protectionStatus"]
+    },
+    habitats: {
+        title: "Habitats", icon: "♧",
+        description: "Manage habitat types, water sources and conditions.",
+        url: "/api/habitats",
+        fields: [
+            ["habitatName","Habitat name","text",true],
+            ["habitatType","Habitat type","text",true],
+            ["location","Location","text",true],
+            ["areaSizeSqKm","Area size (sq. km)","number",false],
+            ["waterSource","Water source","text",false],
+            ["conservationStatus","Conservation status","text",true],
+            ["description","Description","textarea",false]
+        ],
+        columns: ["id","habitatName","habitatType","location","waterSource","conservationStatus"]
+    },
+    staff: {
+        title: "Field staff", icon: "♙",
+        description: "Manage ranger and field staff assignments.",
+        url: "/api/staff",
+        fields: [
+            ["employeeId","Employee ID","text",true],
+            ["fullName","Full name","text",true],
+            ["role","Role","text",true],
+            ["phone","Phone","text",false],
+            ["assignedArea","Assigned area","text",true],
+            ["availabilityStatus","Availability status","text",true]
+        ],
+        columns: ["id","employeeId","fullName","role","assignedArea","availabilityStatus"]
+    },
+    resources: {
+        title: "Resources", icon: "▣",
+        description: "Track vehicles and conservation equipment.",
+        url: "/api/resources",
+        fields: [
+            ["resourceName","Resource name","text",true],
+            ["resourceType","Resource type","text",true],
+            ["quantity","Quantity","number",true],
+            ["conditionStatus","Condition","text",true],
+            ["assignedArea","Assigned area","text",false],
+            ["allocationStatus","Allocation status","text",true]
+        ],
+        columns: ["id","resourceName","resourceType","quantity","conditionStatus","allocationStatus"]
+    },
+    programmes: {
+        title: "Conservation programmes", icon: "✳",
+        description: "Track conservation initiatives, budgets and targets.",
+        url: "/api/conservation-programmes",
+        fields: [
+            ["programmeName","Programme name","text",true],
+            ["objectives","Objectives","textarea",true],
+            ["assignedArea","Assigned area","text",true],
+            ["budget","Budget","number",false],
+            ["targetValue","Target value","number",false],
+            ["achievedValue","Achieved value","number",false],
+            ["status","Status","text",true]
+        ],
+        columns: ["id","programmeName","assignedArea","budget","targetValue","achievedValue","status"]
+    }
+};
+
+const serviceChecks = [
+    {name:"Wildlife service", path:"/api/wildlife", port:8081},
+    {name:"Incident service", path:"/api/incidents", port:8082},
+    {name:"Patrol service", path:"/api/patrols", port:8083},
+    {name:"Rescue service", path:"/api/rescues", port:8084},
+    {name:"Analytics service", path:"/api/analytics/summary", port:8085},
+    {name:"Habitat service", path:"/api/habitats", port:8086},
+    {name:"Staff & resource service", path:"/api/staff", port:8087},
+    {name:"Conservation service", path:"/api/conservation-programmes", port:8088}
+];
+
+let currentPage = "dashboard";
+let currentRecords = [];
+let toastTimer;
+let editingPatrolId = null;
+
+function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    })[char]);
+}
+
+function notify(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.style.display = "block";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.style.display = "none", 4000);
+}
+
+async function api(path, options = {}) {
+    const response = await fetch(API + path, {
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {})
+        }
+    });
+
+    if (!response.ok) {
+        const body = await response.text();
+        throw new Error("HTTP " + response.status + (body ? ": " + body.slice(0,180) : ""));
+    }
+
+    if (response.status === 204) return null;
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+}
+
+function openPage(page) {
+    currentPage = page;
+    document.querySelectorAll(".nav-button").forEach(button => {
+        button.classList.toggle("active", button.dataset.page === page);
+    });
+
+    const dashboard = page === "dashboard";
+    document.getElementById("dashboard-page").classList.toggle("hidden", !dashboard);
+    document.getElementById("records-page").classList.toggle("hidden", dashboard);
+
+    if (dashboard) {
+        document.getElementById("page-title").textContent = "Conservation overview";
+        document.getElementById("page-subtitle").textContent = "A unified view of wildlife protection and field operations.";
+        refreshDashboard();
+    } else {
+        const module = modules[page];
+        document.getElementById("page-title").textContent = module.title;
+        document.getElementById("page-subtitle").textContent = module.description;
+        document.getElementById("records-heading").textContent = module.title;
+        document.getElementById("records-description").textContent = module.description;
+        document.getElementById("search").value = "";
+        loadRecords();
+    }
+}
+
+document.querySelectorAll(".nav-button").forEach(button => {
+    button.addEventListener("click", () => openPage(button.dataset.page));
+});
+
+function renderModules() {
+    document.getElementById("module-cards").innerHTML = Object.entries(modules).map(([key, item]) => `
+        <button class="module" onclick="openPage('${key}')">
+            <div class="module-icon">${item.icon}</div>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.description)}</p>
+            <small>Open workspace →</small>
+        </button>
+    `).join("");
+}
+
+async function checkServices() {
+    const list = document.getElementById("service-list");
+    list.innerHTML = serviceChecks.map(service => `
+        <div class="service">
+            <div>${escapeHtml(service.name)}<small>Port ${service.port}</small></div>
+            <span class="badge" id="health-${service.port}">Checking…</span>
+        </div>
+    `).join("");
+
+    const results = await Promise.allSettled(
+        serviceChecks.map(service => api(service.path))
+    );
+
+    let online = 0;
+    results.forEach((result, index) => {
+        const element = document.getElementById("health-" + serviceChecks[index].port);
+        if (result.status === "fulfilled") {
+            element.textContent = "Reachable";
+            online++;
+        } else {
+            element.textContent = "Unavailable";
+            element.style.color = "var(--red)";
+        }
+    });
+
+    const dot = document.getElementById("gateway-dot");
+    const status = document.getElementById("gateway-status");
+    dot.className = "dot " + (online > 0 ? "online" : "offline");
+    status.textContent = online + "/" + serviceChecks.length + " services reachable";
+}
+
+async function loadRecordsFor(key) {
+    const data = await api(modules[key].url);
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.content)) return data.content;
+    return [];
+}
+
+async function refreshDashboard() {
+    try {
+        const summary = await api("/api/analytics/summary");
+        const mapping = {
+            "m-wildlife": ["totalWildlife", "wildlifeCount"],
+            "m-incidents": ["totalIncidents", "incidentCount"],
+            "m-patrols": ["activePatrols", "totalPatrols"],
+            "m-rescues": ["totalRescues", "activeRescues"]
+        };
+
+        for (const [elementId, keys] of Object.entries(mapping)) {
+            const value = keys.map(key => summary?.[key]).find(v => v !== undefined);
+            document.getElementById(elementId).textContent = value ?? "—";
+        }
+    } catch (error) {
+        console.error("Analytics unavailable:", error.message);
+        document.querySelectorAll(".metric-value").forEach(el => {
+            if (el.textContent === "—") el.textContent = "N/A";
+        });
+    }
+
+    await Promise.allSettled([checkServices(), loadRecent()]);
+}
+
+async function loadRecent() {
+    const container = document.getElementById("recent-records");
+    const sources = [
+        {key:"incidents", label:"Incident"},
+        {key:"rescues", label:"Rescue"},
+        {key:"patrols", label:"Patrol"}
+    ];
+
+    const results = await Promise.allSettled(
+        sources.map(source => loadRecordsFor(source.key))
+    );
+
+    const rows = [];
+    results.forEach((result, index) => {
+        if (result.status !== "fulfilled") return;
+        result.value.slice(-5).forEach(record => rows.push({
+            type: sources[index].label,
+            id: record.id,
+            name: record.incidentType || record.animalSpecies || record.rangerName || "Field record",
+            location: record.location || record.rescueLocation || record.assignedArea || "—",
+            status: record.status || "Recorded"
+        }));
+    });
+
+    if (!rows.length) {
+        container.innerHTML = '<div class="empty">No field records available, or services are unreachable.</div>';
+        return;
+    }
+
+    container.innerHTML = `<div class="table-wrap"><table>
+        <thead><tr><th>Type</th><th>Record</th><th>Location</th><th>Status</th></tr></thead>
+        <tbody>${rows.slice(-10).reverse().map(row => `<tr>
+            <td>${escapeHtml(row.type)}</td>
+            <td>${escapeHtml(row.name)}</td>
+            <td>${escapeHtml(row.location)}</td>
+            <td><span class="badge">${escapeHtml(row.status)}</span></td>
+        </tr>`).join("")}</tbody>
+    </table></div>`;
+}
+
+async function loadRecords() {
+    const module = modules[currentPage];
+    if (!module) return;
+
+    document.getElementById("table-container").innerHTML = '<div class="empty">Loading records…</div>';
+
+    try {
+        currentRecords = await loadRecordsFor(currentPage);
+        renderTable();
+    } catch (error) {
+        currentRecords = [];
+        document.getElementById("table-container").innerHTML = `
+            <div class="empty">
+                <strong>Could not load records.</strong><br><br>
+                ${escapeHtml(error.message)}<br><br>
+                Check that the API Gateway is running on port 8090 and that this service is available.
+            </div>`;
+    }
+}
+
+function renderTable() {
+    const module = modules[currentPage];
+    if (!module) return;
+
+    const query = document.getElementById("search").value.toLowerCase();
+    const records = currentRecords.filter(record =>
+        JSON.stringify(record).toLowerCase().includes(query)
+    );
+
+    if (!records.length) {
+        document.getElementById("table-container").innerHTML =
+            '<div class="empty">No records found. Use "Add record" to create one.</div>';
+        return;
+    }
+
+    const isPatrol = currentPage === "patrols";
+
+    const headers = module.columns.map(column =>
+        `<th>${escapeHtml(
+            column.replace(/([A-Z])/g, " $1")
+                  .replace(/^./, s => s.toUpperCase())
+        )}</th>`
+    ).join("");
+
+
+    document.getElementById("table-container").innerHTML = `
+        <table>
+            <thead>
+                <tr>
+                    ${headers}
+                </tr>
+            </thead>
+            <tbody>
+                ${records.map(record => `
+                    <tr>
+                        ${module.columns.map(column => {
+                            const value = record[column];
+                            let display = value && typeof value === "object"
+                                ? JSON.stringify(value)
+                                : value;
+
+                            if (
+                                /(time|date|at)$/i.test(column) &&
+                                typeof value === "string" &&
+                                !Number.isNaN(Date.parse(value))
+                            ) {
+                                display = new Date(value).toLocaleString("en-IN", {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true
+                                });
+                            }
+
+                            return `<td>${
+                                column.toLowerCase().includes("status")
+                                    ? `<span class="badge">${escapeHtml(display ?? "—")}</span>`
+                                    : escapeHtml(display ?? "—")
+                            }</td>`;
+                        }).join("")}
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>`;
+
+}
+
+function openForm() {
+    const module = modules[currentPage];
+    if (!module) return;
+
+    document.getElementById("form-title").textContent = "Add " + module.title.toLowerCase();
+    document.getElementById("form-fields").innerHTML = module.fields.map(field => {
+        const [key, label, type, required, options] = field;
+        let control;
+
+        if (type === "select") {
+            control = `<select name="${key}" ${required ? "required" : ""}>
+                <option value="">Choose…</option>
+                ${options.map(option => `<option value="${escapeHtml(option)}">${escapeHtml(option.replaceAll("_"," "))}</option>`).join("")}
+            </select>`;
+        } else if (type === "textarea") {
+            control = `<textarea name="${key}" rows="3" ${required ? "required" : ""}></textarea>`;
+        } else {
+            control = `<input name="${key}" type="${type}" ${type === "number" ? 'min="0" step="any"' : ""}
+                ${required ? "required" : ""}>`;
+        }
+
+        const full = type === "textarea" ? " full" : "";
+        return `<div class="field${full}">
+            <label for="field-${key}">${escapeHtml(label)}${required ? " *" : ""}</label>
+            ${control.replace(`name="${key}"`, `id="field-${key}" name="${key}"`)}
+        </div>`;
+    }).join("");
+
+    document.getElementById("modal-backdrop").classList.add("open");
+}
+
+function closeForm() {
+    document.getElementById("modal-backdrop").classList.remove("open");
+    document.getElementById("record-form").reset();
+}
+
+async function saveRecord(event) {
+    event.preventDefault();
+    const module = modules[currentPage];
+    const form = document.getElementById("record-form");
+    const button = document.getElementById("save-button");
+    const record = {};
+
+    module.fields.forEach(([key, label, type]) => {
+        const value = new FormData(form).get(key);
+        if (value !== null && value !== "") {
+            record[key] = type === "number" ? Number(value) : value;
+        }
+    });
+
+    button.disabled = true;
+    button.textContent = "Saving…";
+
+    try {
+    	const isEditing = editingPatrolId !== null;
+
+    	if (isEditing && currentPage === "patrols") {
+    	    await api(`/api/patrols/${editingPatrolId}`, {
+    	        method: "PUT",
+    	        body: JSON.stringify(record)
+    	    });
+    	} else {
+    	    await api(module.url, {
+    	        method: "POST",
+    	        body: JSON.stringify(record)
+    	    });
+    	}
+
+    	editingPatrolId = null;
+    	form.onsubmit = saveRecord;
+        closeForm();
+        notify(isEditing ? "Patrol updated successfully." : "Record saved successfully.");
+        await loadRecords();
+        refreshDashboard();
+    } catch (error) {
+        notify("Save failed: " + error.message);
+    } finally {
+        button.disabled = false;
+        button.textContent = "Save record";
+    }
+  /*   let editingPatrolId = null; */
+
+    window.editPatrol = async function(id) {
+        const patrol = currentRecords.find(
+            record => Number(record.id) === Number(id)
+        );
+
+        if (!patrol) {
+            notify("Patrol record not found.");
+            return;
+        }
+
+        editingPatrolId = id;
+
+        openForm();
+
+        document.getElementById("form-title").textContent = "Edit patrol";
+
+        const fields = modules[currentPage].fields;
+
+        fields.forEach(([key]) => {
+            const input = document.querySelector(
+                `#form-fields [name="${key}"]`
+            );
+
+            if (input && patrol[key] != null) {
+                input.value = patrol[key];
+            }
+        });
+
+        const form = document.getElementById("record-form");
+        const button = document.getElementById("save-button");
+
+        button.textContent = "Update patrol";
+        form.onsubmit = saveRecord;
+
+    }
+    window.editPatrol = async function(id) {
+        const patrol = currentRecords.find(
+            record => Number(record.id) === Number(id)
+        );
+
+        if (!patrol) {
+            notify("Patrol record not found.");
+            return;
+        }
+
+        editingPatrolId = id;
+        openForm();
+
+        document.getElementById("form-title").textContent = "Edit patrol";
+
+        modules.patrols.fields.forEach(([key]) => {
+            const input = document.querySelector(`#form-fields [name="${key}"]`);
+            if (input && patrol[key] != null) {
+                input.value = patrol[key];
+            }
+        });
+
+        document.getElementById("save-button").textContent = "Update patrol";
+    };
+
+    window.deletePatrol = async function(id) {
+        if (!confirm("Are you sure you want to delete this patrol?")) return;
+
+        try {
+            await api(`/api/patrols/${id}`, { method: "DELETE" });
+            notify("Patrol deleted successfully.");
+            await loadRecords();
+            refreshDashboard();
+        } catch (error) {
+            notify("Could not delete patrol: " + error.message);
+        }
+    };
+
+    window.deletePatrol = async function(id) {
+        if (!confirm("Are you sure you want to delete this patrol?")) {
+            return;
+        }
+
+        try {
+            await api(`/api/patrols/${id}`, {
+                method: "DELETE"
+            });
+
+            notify("Patrol deleted successfully.");
+            await loadRecords();
+            refreshDashboard();
+        } catch (error) {
+            notify("Could not delete patrol: " + error.message);
+        }
+    }
+
+}
+
+renderModules();
+openPage("dashboard");
+</script>
+</body>
+</html>

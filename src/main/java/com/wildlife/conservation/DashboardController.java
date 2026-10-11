@@ -58,6 +58,6 @@ public class DashboardController {
         model.addAttribute("highPriorityCases", highPriorityCases);
         model.addAttribute("reportedCases", reportedCases);
 
-        return "dashboard";
+        return "redirect:/index.html";
     }
 }
